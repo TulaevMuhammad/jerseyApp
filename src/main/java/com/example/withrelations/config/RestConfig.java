@@ -13,6 +13,8 @@ public class RestConfig extends ResourceConfig {
         register(EmployeeResource.class);
         register(CompanyResource.class);
         register(Department.class);
+        register(CorsFilter.class);
     }
+
 
 }
