@@ -7,8 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Employee {
+public class Department {
     private int id;
     private String name;
-    private int departmentId;
+    private int companyId;
 }
