@@ -1,9 +1,13 @@
 package com.example.withrelations.resource;
 
+import com.example.withrelations.entity.Company;
+import com.example.withrelations.entity.Department;
 import com.example.withrelations.entity.Employee;
 import com.example.withrelations.entity.EmployeeWithDetails;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -100,5 +104,86 @@ public class EmployeeResource {
         String selectSql = "SELECT * FROM employee WHERE id = ?";
         return jdbcTemplate.queryForObject(selectSql, new Object[]{employee.getId()}, new BeanPropertyRowMapper<>(Employee.class));
     }
+    @POST
+    @Path("/saveDepartment")
+    public Response saveDepartment(Department department) {
+        String sql = "INSERT INTO department (name, company_id) VALUES (?, ?)";
+
+        try {
+            jdbcTemplate.update(sql, department.getName(), department.getCompanyId());
+            return Response.status(Response.Status.CREATED).entity(department).build();
+        } catch (DataAccessException e) {
+            // Handle the exception here
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
+        }
+    }
+
+
+    @GET
+    @Path("/getAllDepartments")
+    public List<Department> getAllDepartments() {
+        String sql = "SELECT * FROM department";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Department.class));
+    }
+
+    @PUT
+    @Path("/updateDepartment")
+    public Department updateDepartment(Department department) {
+        String sql = "UPDATE department SET name=?, company_id=? WHERE id=?";
+        jdbcTemplate.update(sql, department.getName(), department.getCompanyId(), department.getId());
+
+        // Assuming you want to return the updated department, you can fetch it from the database
+        String selectSql = "SELECT * FROM department WHERE id = ?";
+        return jdbcTemplate.queryForObject(selectSql, new Object[]{department.getId()}, new BeanPropertyRowMapper<>(Department.class));
+    }
+
+    @GET
+    @Path("/getDepartment/{id}")
+    public Department getDepartmentById(@PathParam("id") Integer id) {
+        String sql = "SELECT * FROM department WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Department.class));
+    }
+
+
+    @POST
+    @Path("/saveCompany")
+    public Response saveCompany(Company company) {
+        String sql = "INSERT INTO company (name) VALUES (?)";
+
+        try {
+            jdbcTemplate.update(sql, company.getName());
+            return Response.status(Response.Status.CREATED).entity(company).build();
+        } catch (DataAccessException e) {
+            // Handle the exception here
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
+        }
+    }
+
+
+    @GET
+    @Path("/getAllCompanies")
+    public List<Company> getAllCompanies() {
+        String sql = "SELECT * FROM company";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Company.class));
+    }
+
+    @PUT
+    @Path("/updateCompany")
+    public Company updateCompany(Company company) {
+        String sql = "UPDATE company SET name=? WHERE id=?";
+        jdbcTemplate.update(sql, company.getName(), company.getId());
+
+        // Assuming you want to return the updated company, you can fetch it from the database
+        String selectSql = "SELECT * FROM company WHERE id = ?";
+        return jdbcTemplate.queryForObject(selectSql, new Object[]{company.getId()}, new BeanPropertyRowMapper<>(Company.class));
+    }
+
+    @GET
+    @Path("/getCompany/{id}")
+    public Company getCompanyById(@PathParam("id") Integer id) {
+        String sql = "SELECT * FROM company WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Company.class));
+    }
+
 
 }

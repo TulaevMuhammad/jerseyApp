@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
-@Path("api/v1/department")
+@Path("department")
 @Consumes("application/json")
 @Produces("application/json")
 public class DepartmentResource {
